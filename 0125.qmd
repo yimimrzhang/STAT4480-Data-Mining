@@ -2,7 +2,6 @@
 title: "Activity 1/25"
 output: pdf_document
 editor: visual
-format: gfm
 ---
 
 ## Import data
