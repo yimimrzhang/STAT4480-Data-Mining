@@ -1,0 +1,30 @@
+---
+title: "Activity 1/25"
+output: pdf_document
+editor: visual
+---
+
+## Import data
+
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+data <- read_csv("pva97nko.csv", na=c("","NA",".", "?"))
+```
+
+## Data cleaning and define measure levels
+
+```{r}
+## data cleaning and define measure levels ##
+data <- data %>% 
+  mutate(across(where(is.character) & !c(StatusCat96NK, DemGender,DemHomeOwner), parse_number)) %>% 
+  mutate(across(where(is.character) | c(StatusCatStarAll, DemCluster, TargetB), as.factor))
+```
+
+## Examine all the variables among the first 10 observations
+
+```{r}
+print(data, width = Inf)
+```
+
+**The variables with missing values among the first 10 observations are TargetD, GiftAvgCard36, and DemAge. They are all numerical variables.**
