@@ -25,8 +25,8 @@ data <- data %>% mutate(DemMedIncome=replace(DemMedIncome,DemMedIncome==0, NA))
 
 ## Use Graphics ##
 
-# Side-by-side Boxplot of DemMedIncome by TargetB
-ggplot(data, aes(x=TargetB, y=DemMedIncome, fill=TargetB)) +
+# Side-by-side Boxplot of DemAge by TargetB
+ggplot(data, aes(x=TargetB, y=DemAge, fill=TargetB)) +
   geom_boxplot(notch=TRUE)
 
 
@@ -36,11 +36,12 @@ ggplot(data, aes(x=TargetB, y=DemMedIncome, fill=TargetB)) +
 # Order factor levels by freq
 StatusCat96NK_order<-reorder(data$StatusCat96NK, data$StatusCat96NK, function(x) -length(x))
 
-counts = table(data$TargetB, StatusCat96NK_order)
-barplot(counts, col=c("darkblue","red"), legend.text = TRUE, 
-        main = "StatusCat96NK by TargetB",
-        xlab="StatusCat96NK", ylab="Freq", 
-        beside=TRUE) # Grouped bars
+ggplot(data, aes(x=StatusCat96NK_order, fill=TargetB)) + 
+  geom_bar(position="dodge") 
+
+# ggplot(data, aes(x=DemGender, fill=TargetB)) + 
+#   geom_bar(position="dodge") 
+
 
 
 # Mosaic plot
@@ -69,19 +70,15 @@ data %>% group_by(TargetB) %>%  skim
 # nominal input - chi-square
 data %>% 
   summarise(across(where(is.factor), ~ chisq.test(.,TargetB)$p.value)) %>% 
-  t %>% 
-  as.data.frame %>% 
-  rownames_to_column %>% 
-  arrange(V1)
+  unlist %>% 
+  sort
 
 
 # numeric input - t stat
 data %>% 
   summarise(across(where(is.numeric) & !c(ID, TargetD), ~ t.test(.~TargetB)$p.value)) %>%
-  t %>% 
-  as.data.frame %>% 
-  rownames_to_column %>% 
-  arrange(V1)
+  unlist %>% 
+  sort
 
 
 # numeric input - area under ROC curve for predicting target
@@ -99,11 +96,8 @@ data %>%
 # numeric input - Pearson correlation
 data %>% 
   summarise(across(where(is.numeric), ~ abs(cor(.,TargetD, use = "complete.obs")))) %>% 
-  t %>% 
-  as.data.frame %>% 
-  rownames_to_column %>% 
-  arrange(desc(V1))
-
+  unlist %>% 
+  sort(decreasing = TRUE)
 
 
 # numeric input - Lowess R^2
@@ -119,10 +113,8 @@ data %>%
 # categorical input - ANOVA F-stat
 data %>% 
   summarise(across(where(is.factor) & !TargetB, ~ summary(aov(TargetD ~ .))[[1]][["Pr(>F)"]][1])) %>% 
-  t %>% 
-  as.data.frame %>% 
-  rownames_to_column %>% 
-  arrange(V1)
+  unlist %>% 
+  sort
 
 
 
