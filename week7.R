@@ -131,6 +131,7 @@ exp(coef(reg.bwd))
 
 
 # variable importance #
+library(caret)
 varImp(reg.bwd) # absolute value of z stat
 varImp(reg.bwd) %>% arrange((desc(Overall)) )
 
