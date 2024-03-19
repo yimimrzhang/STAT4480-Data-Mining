@@ -146,7 +146,7 @@ n<-sum(split)
 
 
 # Backward
-reg.bwd <- step(full, direction="backward",k=log(n), trace = FALSE)
+reg.bwd <- step(full, direction="backward",k=log(n), trace = FALSE)  # can be time consuming!
 summary(reg.bwd)
 reg.bwd.prob<-predict(reg.bwd,data.mdl[!split,], type = "response")
 
